@@ -21,6 +21,7 @@ const wallets = [
 export default function Home() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [transactionHash, setTransactionHash] = useState("");
+  const [openSea, setOpenSea] = useState("op-superchain-accelerator")
 
   const handleTransactionSent = (transactionResult: { readonly transactionHash: `0x${string}`; client: any; chain: any; maxBlocksWaitTime?: number }) => {
     const { transactionHash } = transactionResult;
@@ -72,6 +73,15 @@ export default function Home() {
               className="text-blue-500 hover:text-blue-600"
             >
               {transactionHash}
+            </a>
+            <p>View your NFT on OpenSea!</p>
+            <a
+              href={`https://opensea.io/collection/${openSea}?search[sortAscending]=false&search[sortBy]=CREATED_DATE`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:text-blue-600"
+              >
+                {openSea}
             </a>
           </div>
         )}
