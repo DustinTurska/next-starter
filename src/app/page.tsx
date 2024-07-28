@@ -2,6 +2,29 @@ import Image from "next/image";
 import { ConnectButton } from "thirdweb/react";
 import thirdwebIcon from "@public/thirdweb.svg";
 import { client } from "./client";
+import { optimism } from "thirdweb/chains";
+import {
+  createWallet,
+  inAppWallet,
+} from "thirdweb/wallets";
+import { ClaimButton } from "thirdweb/react";
+
+
+const wallets = [
+  createWallet("io.metamask"),
+  inAppWallet({
+    auth: {
+      options: [
+        "email",
+        "google",
+        "apple",
+        "facebook",
+        "phone",
+      ],
+    },
+  }),
+];
+
 
 export default function Home() {
   return (
@@ -12,11 +35,26 @@ export default function Home() {
         <div className="flex justify-center mb-20">
           <ConnectButton
             client={client}
-            appMetadata={{
-              name: "Example App",
-              url: "https://example.com",
+            accountAbstraction={{
+              chain: optimism,
+              factoryAddress: "0x85e23b94e7F5E9cC1fF78BCe78cfb15B81f0DF00",
+              gasless: true,
             }}
           />
+        </div>
+
+        <div className="flex justify-center mb-20">
+          <ClaimButton
+            contractAddress="0x2992e480001AfA6097a4BC7bB8c02d7df819d4cE"
+            chain={optimism}
+            client={client}
+            claimParams={{
+              type: "ERC721",
+              quantity: 1n,
+            }}
+          >
+            Claim NFT
+          </ClaimButton>
         </div>
 
         <ThirdwebResources />
@@ -38,18 +76,11 @@ function Header() {
       />
 
       <h1 className="text-2xl md:text-6xl font-semibold md:font-bold tracking-tighter mb-6 text-zinc-100">
-        thirdweb SDK
-        <span className="text-zinc-300 inline-block mx-1"> + </span>
-        <span className="inline-block -skew-x-6 text-blue-500"> Next.js </span>
+        OP Superchain App Accelerator
       </h1>
-
-      <p className="text-zinc-300 text-base">
-        Read the{" "}
-        <code className="bg-zinc-800 text-zinc-300 px-2 rounded py-1 text-sm mx-1">
-          README.md
-        </code>{" "}
-        file to get started.
-      </p>
+        <h3 className="text-2xl md:text-6xl font-semibold md:font-bold tracking-tighter mb-6 text-zinc-100">
+          Gasless mint!
+        </h3>
     </header>
   );
 }
@@ -57,23 +88,7 @@ function Header() {
 function ThirdwebResources() {
   return (
     <div className="grid gap-4 lg:grid-cols-3 justify-center">
-      <ArticleCard
-        title="thirdweb SDK Docs"
-        href="https://portal.thirdweb.com/typescript/v5"
-        description="thirdweb TypeScript SDK documentation"
-      />
 
-      <ArticleCard
-        title="Components and Hooks"
-        href="https://portal.thirdweb.com/typescript/v5/react"
-        description="Learn about the thirdweb React components and hooks in thirdweb SDK"
-      />
-
-      <ArticleCard
-        title="thirdweb Dashboard"
-        href="https://thirdweb.com/dashboard"
-        description="Deploy, configure, and manage your smart contracts from the dashboard."
-      />
     </div>
   );
 }
