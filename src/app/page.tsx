@@ -6,9 +6,12 @@ import thirdwebIcon from "@public/thirdweb.svg";
 import { client } from "./client";
 import { optimism } from "thirdweb/chains";
 import { createWallet, inAppWallet } from "thirdweb/wallets";
-import { useState } from 'react';
-import { Confetti } from "./Confetti";
+import { Confetti, Confetti as type } from "./Confetti";
 import { MediaRenderer } from "thirdweb/react";
+import React, { useState, useEffect } from 'react';
+import ReactConfetti from 'react-confetti';
+import { useWindowSize } from 'react-use';
+
 
 const wallets = [
   createWallet("io.metamask"),
@@ -22,17 +25,26 @@ const wallets = [
 export default function Home() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [transactionHash, setTransactionHash] = useState("");
-  const [openSea, setOpenSea] = useState("op-superchain-accelerator")
+  const [openSea, setOpenSea] = useState("op-superchain-accelerator");
+  const { width, height } = useWindowSize();
 
   const handleTransactionSent = (transactionResult: { readonly transactionHash: `0x${string}`; client: any; chain: any; maxBlocksWaitTime?: number }) => {
     const { transactionHash } = transactionResult;
     setShowConfetti(true);
     setTransactionHash(transactionHash);
-    setTimeout(() => setShowConfetti(false), 5000);
+    setTimeout(() => setShowConfetti(false), 10000);
   };
 
   return (
     <main className="p-4 pb-10 min-h-[100vh] flex items-center justify-center container max-w-screen-lg mx-auto">
+      {showConfetti && (
+        <ReactConfetti
+          width={width}
+          height={height}
+          recycle={false}
+          numberOfPieces={1000}
+        />
+      )}
       <div className="py-20">
         <Header />
 
@@ -41,7 +53,7 @@ export default function Home() {
             <MediaRenderer
               src="ipfs://QmZ1512rWfso1iUh2UkK5LUjw73zCHsxc5RXnsh6NfJo63/TreasureChests.png"
               alt="Example NFT image"
-              width="100%"
+              width="75%"
               height="auto"
               client={client}
             />

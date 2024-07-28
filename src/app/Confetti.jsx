@@ -56,8 +56,8 @@ export function Confetti({ fire }) {
         pointerEvents: 'none',
         width: '100%',
         height: '100%',
-        top: 0,
-        left: 0,
+        top: 10,
+        left: 10,
       }}
     />
   );
