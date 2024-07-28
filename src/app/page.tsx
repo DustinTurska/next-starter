@@ -1,32 +1,34 @@
+'use client';
+
 import Image from "next/image";
-import { ConnectButton } from "thirdweb/react";
+import { ConnectButton, ClaimButton } from "thirdweb/react";
 import thirdwebIcon from "@public/thirdweb.svg";
 import { client } from "./client";
 import { optimism } from "thirdweb/chains";
-import {
-  createWallet,
-  inAppWallet,
-} from "thirdweb/wallets";
-import { ClaimButton } from "thirdweb/react";
-
+import { createWallet, inAppWallet } from "thirdweb/wallets";
+import { useState } from 'react';
+import { Confetti } from "./Confetti";
 
 const wallets = [
   createWallet("io.metamask"),
   inAppWallet({
     auth: {
-      options: [
-        "email",
-        "google",
-        "apple",
-        "facebook",
-        "phone",
-      ],
+      options: ["email", "google", "apple", "facebook", "phone"],
     },
   }),
 ];
 
-
 export default function Home() {
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [transactionHash, setTransactionHash] = useState("");
+
+  const handleTransactionSent = (transactionResult: { readonly transactionHash: `0x${string}`; client: any; chain: any; maxBlocksWaitTime?: number }) => {
+    const { transactionHash } = transactionResult;
+    setShowConfetti(true);
+    setTransactionHash(transactionHash);
+    setTimeout(() => setShowConfetti(false), 5000);
+  };
+
   return (
     <main className="p-4 pb-10 min-h-[100vh] flex items-center justify-center container max-w-screen-lg mx-auto">
       <div className="py-20">
@@ -48,6 +50,7 @@ export default function Home() {
             contractAddress="0x2992e480001AfA6097a4BC7bB8c02d7df819d4cE"
             chain={optimism}
             client={client}
+            onTransactionSent={handleTransactionSent}
             claimParams={{
               type: "ERC721",
               quantity: 1n,
@@ -56,6 +59,22 @@ export default function Home() {
             Claim NFT
           </ClaimButton>
         </div>
+
+        <Confetti fire={showConfetti} />
+
+        {transactionHash && (
+          <div className="text-center mt-4">
+            <p>Transaction sent! Fee covered by thirdweb OP Superchain Grant Credits! View on block explorer to see the paymaster transaction:</p>
+            <a
+              href={`https://optimistic.etherscan.io/tx/${transactionHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:text-blue-600"
+            >
+              {transactionHash}
+            </a>
+          </div>
+        )}
 
         <ThirdwebResources />
       </div>
@@ -78,9 +97,9 @@ function Header() {
       <h1 className="text-2xl md:text-6xl font-semibold md:font-bold tracking-tighter mb-6 text-zinc-100">
         OP Superchain App Accelerator
       </h1>
-        <h3 className="text-2xl md:text-6xl font-semibold md:font-bold tracking-tighter mb-6 text-zinc-100">
-          Gasless mint!
-        </h3>
+      <h3 className="text-2xl md:text-6xl font-semibold md:font-bold tracking-tighter mb-6 text-zinc-100">
+        Gasless mint!
+      </h3>
     </header>
   );
 }
